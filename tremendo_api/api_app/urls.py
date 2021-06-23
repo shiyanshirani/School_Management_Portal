@@ -4,24 +4,17 @@ from .api import StudentCreateApi, TeacherCreateApi, BatchCreateApi,\
                 StudentUpdateApi, TeacherUpdateApi, BatchUpdateApi,\
                 StudentDeleteApi, TeacherDeleteApi, BatchDeleteApi
 from . import views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-    # path('student/create', StudentCreateApi.as_view()),
-    # path('teacher/create', TeacherCreateApi.as_view()),
-    # path('batch/create', BatchCreateApi.as_view()),
+    path('students/', views.student_operations, name='student-details'),
+    path('students/crud/<int:pk>/', views.student_changes, name='Student-changes'),
 
-    # path('student/', StudentApi.as_view()),
-    # path('teacher/', TeacherApi.as_view()),
-    # path('batch/', BatchApi.as_view()),
+    path('teachers/', views.teacher_operations, name='teacher-details'),
+    path('teachers/crud/<int:pk>/', views.teacher_changes, name="teacher-changes"),
 
-    # path('student/<int:pk>', StudentApi.as_view()), 
-    # path('teacher/<int:pk>', TeacherApi.as_view()),
-    # path('batch/<int:pk>', BatchApi.as_view()),
+    path('batch/', views.batch, name="batch-details"),
 
-    # path('student/<int:pk>/delete', StudentDeleteApi.as_view()), 
-    # path('teacher/<int:pk>/delete', TeacherDeleteApi.as_view()), 
-    # path('batch/<int:pk>/delete', BatchDeleteApi.as_view()), 
-
-    path('students/', views.student_operations, name='Student-details'),
-    path('students/crud/<int:pk>', views.student_delete, name='Student-delete')
+    path('api/token/', TokenObtainPairView.as_view(), name="get-token"),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name="refresh-token")
 ]
