@@ -30,5 +30,8 @@ python manage.py runserver
 
 The project will be available at **127.0.0.1:8000**.
 Admin page: **localhost:8000/admin/**
+
+```
 Credentials: username : Shiyan
 password : testing
+```
