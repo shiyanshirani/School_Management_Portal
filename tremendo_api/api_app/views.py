@@ -3,6 +3,7 @@ from .serializers import StudentSerializer, TeacherSerializer, BatchSerializer
 from .models import Student, Teacher, Batch
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
@@ -40,11 +41,11 @@ def student_changes(request, pk):
     try:
         student = Student.objects.get(pk=pk)
     except Student.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response("Student does not exist." ,status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'GET':
         serializer = StudentSerializer(student)
-        return Response(serializer.data)
+        return Response(serializer.data, )
     
     elif request.method == "PUT":
         data = JSONParser().parse(request)
@@ -105,5 +106,15 @@ def teacher_changes(request, pk):
 def batch(request):
     if request.method == "GET":
         batches = Batch.objects.all()
-        serializer = BatchSerializer(batches, many=True)
+        context = {
+            "batches": batches.values('id',)
+        }
+        # serializer = BatchSerializer(batches, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+# class BatchViewSet(viewsets.ModelViewSet):
+#     serializer_class = BatchSerializer
+
+#     def get_queryset(self):
+#         batch = Batch.objects.all()
+#         return batch
