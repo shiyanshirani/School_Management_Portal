@@ -30,7 +30,7 @@ class StudentDetail(APIView):
         try:
             return Student.objects.get(pk=pk)
         except Student.DoesNotExist:
-            raise Response({"Error": "Student does not exist."}, status=status.HTTP_400_BAD_REQUEST) # doubt
+            return Response("Student does not exist.", status=status.HTTP_400_BAD_REQUEST) # doubt
 
     def get(self, request, pk):
         student = self.get_object(pk)
@@ -75,25 +75,34 @@ class TeacherDetail(APIView):
         try:
             return Teacher.objects.get(pk=pk)
         except Teacher.DoesNotExist:
-            return Response({"Error": "Teacher does not exist"}, status=status.HTTP_400_BAD_REQUEST)  # doubt
+            return Response({"Error": "TeacherID: {} does not exist".format(pk)}, status=status.HTTP_400_BAD_REQUEST)  # doubt
         
     def get(self, request, pk):
-        teacher = self.get_object(pk=pk)
-        serializer = TeacherSerializer(teacher)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            teacher = self.get_object(pk=pk)
+            serializer = TeacherSerializer(teacher)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"Error": "TeacherID: {} does not exist.".format(pk)}, status=status.HTTP_400_BAD_REQUEST)
+
     
     def put(self, request, pk):
-        teacher = self.get_object(pk)
-        serializer = TeacherSerializer(teacher, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            teacher = self.get_object(pk)
+            serializer = TeacherSerializer(teacher, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"Error": "TeacherID: {} does not exist".format(pk)}, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk):
-        teacher = self.get_object(pk=pk)
-        teacher.delete()
-        return Response({"Success": "Teacher is deleted."}, status=status.HTTP_200_OK)
+        try:
+            teacher = self.get_object(pk=pk)
+            teacher.delete()
+            return Response({"Success": "Teacher is deleted."}, status=status.HTTP_200_OK)
+        except:
+            return Response({"Error": "TeacherID: {} does not exist".format(pk)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
