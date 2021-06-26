@@ -1,110 +1,107 @@
 from django.shortcuts import render
 from api_app.serializers import StudentSerializer, TeacherSerializer, BatchSerializer
 from api_app.models import Student, Teacher, Batch
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
-from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
 # Create your views here.
 
-@csrf_exempt
-@api_view(['GET', 'POST'])  # GET all and POST
-def student(request):
-    if request.method == "GET":
+class StudentList(APIView):
+    """
+    List all students, or create a new student
+    """
+    def get(self, request):
         students = Student.objects.all()
         serializer = StudentSerializer(students, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
-    elif request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = StudentSerializer(data=data)
+    def post(self, request):
+        serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-@csrf_exempt
-@api_view(['GET', 'DELETE', 'PUT'])  # GET(by_id), PUT & DELETE
-def student_api(request, pk):
-    try:
-        student = Student.objects.get(pk=pk)
-    except Student.DoesNotExist:
-        return Response("Student does not exist." ,status=status.HTTP_400_BAD_REQUEST)
+class StudentDetail(APIView):
+    """
+    Retrieve, update or delete a student
+    """
+    def get_object(self, pk):
+        try:
+            return Student.objects.get(pk=pk)
+        except Student.DoesNotExist:
+            raise Response({"Error": "Student does not exist."}, status=status.HTTP_400_BAD_REQUEST) # doubt
 
-    if request.method == 'GET':
+    def get(self, request, pk):
+        student = self.get_object(pk)
         serializer = StudentSerializer(student)
         return Response(serializer.data)
-    
-    elif request.method == "PUT":
-        data = JSONParser().parse(request)
-        serializer = StudentSerializer(student, data=data)
+
+    def put(self, request, pk):
+        student = self.get_object(pk)
+        serializer = StudentSerializer(student, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    elif request.method == "DELETE":
+
+    def delete(self, request, pk):
+        student = self.get_object(pk)
         student.delete()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-# CRUD Teacher
-
-@csrf_exempt
-@api_view(['GET', 'POST'])  # get all details and post
-def teacher(request):
-    if request.method == "GET":
-        teacher = Teacher.objects.all()
-        serializer = TeacherSerializer(teacher, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class TeacherList(APIView):
+    """
+    List all teachers, or create a new teacher. 
+    """
+    def get(self, request):
+        teachers = Teacher.objects.all()
+        serializers = TeacherSerializer(teachers, many=True)
+        return Response(serializers.data, status=status.HTTP_200_OK)
     
-    elif request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = TeacherSerializer(data=data)
+    def post(self, request):
+        serializer = TeacherSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-@csrf_exempt
-@api_view(['GET', 'PUT', 'DELETE'])
-def teacher_api(request, pk):
-    try:
-        teacher = Teacher.objects.get(pk=pk)
-    except Teacher.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    
-    if request.method == "GET":
-        serializer = TeacherSerializer(teacher)
-        return Response(serializer.data)
-
-    elif request.method == "PUT":
-        data = JSONParser().parse(request)
-        serializer = TeacherSerializer(teacher, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == "DELETE":
+class TeacherDetail(APIView):
+    """
+    Retrieve, update or delete a teacher.
+    """
+        
+    def get_object(self, pk):
+        try:
+            return Teacher.objects.get(pk=pk)
+        except Teacher.DoesNotExist:
+            return Response({"Error": "Teacher does not exist"}, status=status.HTTP_400_BAD_REQUEST)  # doubt
+        
+    def get(self, request, pk):
+        teacher = self.get_object(pk=pk)
+        serializer = TeacherSerializer(teacher)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def put(self, request, pk):
+        teacher = self.get_object(pk)
+        serializer = TeacherSerializer(teacher, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+        teacher = self.get_object(pk=pk)
         teacher.delete()
-        return Response(status=status.HTTP_200_OK)
+        return Response({"Success": "Teacher is deleted."}, status=status.HTTP_200_OK)
 
-# Batch
 
-@api_view(['GET'])
-def batch(request):
-    if request.method == "GET":
+
+class BatchList(APIView):
+    """
+    List all batch.
+    """
+    def get(self, request):
         batches = Batch.objects.all()
-        context = {
-            "batches": batches.values('students', 'teacher', 'total_classes', 'completed_classes')
-        }
-        # serializer = BatchSerializer(batches, many=True)
-        return Response(context, status=status.HTTP_200_OK)
-
-# class BatchViewSet(viewsets.ModelViewSet):
-#     serializer_class = BatchSerializer
-
-#     def get_queryset(self):
-#         batch = Batch.objects.all()
-#         return batch
+        serializer = BatchSerializer(batches, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
