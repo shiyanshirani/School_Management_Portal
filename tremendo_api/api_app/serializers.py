@@ -12,6 +12,8 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class BatchSerializer(serializers.ModelSerializer):
+    teacher_list = serializers.StringRelatedField(many=True)
+    student_list = serializers.StringRelatedField(many=True)
     class Meta:
         model = Batch 
-        fields = '__all__'
+        fields = ['id', 'name', 'total_classes', 'completed_classes', 'teacher_list', 'student_list']
