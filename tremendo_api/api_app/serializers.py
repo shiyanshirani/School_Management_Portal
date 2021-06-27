@@ -8,7 +8,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Teacher 
+        model = Teacher
         fields = '__all__'
 
 class BatchSerializer(serializers.ModelSerializer):
