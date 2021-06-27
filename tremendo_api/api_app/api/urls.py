@@ -9,7 +9,8 @@ urlpatterns = [
     path('teachers/', views.TeacherList.as_view(), name='teacher-details'),
     path('teachers/<int:pk>', views.TeacherDetail.as_view(), name="teacher-changes"),
 
-    path('batch/', views.BatchList.as_view(), name="batch-details"),
+    path('batch/', views.BatchList.as_view(), name="batch-list"),
+    path('batch/<int:pk>', views.BatchDetail.as_view(), name="batch-details"),
 
     path('api/token/', TokenObtainPairView.as_view(), name="get-token"),
     path('api/token/refresh', TokenRefreshView.as_view(), name="refresh-token")
