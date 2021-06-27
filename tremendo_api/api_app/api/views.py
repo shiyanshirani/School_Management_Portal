@@ -108,9 +108,25 @@ class TeacherDetail(APIView):
 
 class BatchList(APIView):
     """
-    List all batch.
+    List all batch
     """
     def get(self, request):
         batches = Batch.objects.all()
         serializer = BatchSerializer(batches, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class BatchDetail(APIView):
+    
+    def get_object(self, pk):
+        try:
+            return Batch.objects.get(pk=pk)
+        except Batch.DoesNotExist:
+            return Response({"Error": "Batch does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request, pk):
+        try:
+            batch = self.get_object(pk)
+            serializer = BatchSerializer(batch)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"Error": "Batch does not exist"}, status=status.HTTP_400_BAD_REQUEST)
