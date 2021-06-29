@@ -1,19 +1,24 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
+
 from api_app.serializers import StudentSerializer, TeacherSerializer, BatchSerializer
 from api_app.models import Student, Teacher, Batch
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import ListAPIView
 # Create your views here.
 
 class StudentList(APIView):
     """
     List all students, or create a new student
     """
-    def get(self, request):
-        students = Student.objects.all()
-        serializer = StudentSerializer(students, many=True)
-        return Response(serializer.data)
+    # def get(self, request):
+    #     students = Student.objects.all()
+    #     serializer = StudentSerializer(serializer.data, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = StudentSerializer(data=request.data)
@@ -130,3 +135,19 @@ class BatchDetail(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response({"Error": "Batch does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentListView(ListAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    pagination_class = PageNumberPagination
+
+class TeacherListView(ListAPIView):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
+    pagination_class = PageNumberPagination
+
+class BatchListView(ListAPIView):
+    queryset = Batch.objects.all()
+    serializer_class = BatchSerializer
+    pagination_class = PageNumberPagination
