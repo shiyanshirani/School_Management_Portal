@@ -16,5 +16,8 @@ urlpatterns = [
     path('batch/<int:pk>', views.BatchDetail.as_view(), name="batch-details"),
 
     path('api/token/', TokenObtainPairView.as_view(), name="get-token"),
-    path('api/token/refresh', TokenRefreshView.as_view(), name="refresh-token")
+    path('api/token/refresh', TokenRefreshView.as_view(), name="refresh-token"),
+
+    path('all_profiles/', views.UserProfileListCreateView.as_view(), name="all-profiles"),
+    path('profile/<int:pk>', views.userProfileDetailView.as_view(), name="profile"),
 ]
