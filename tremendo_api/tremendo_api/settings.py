@@ -31,8 +31,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'api_app',
+    'social_django',
+    'rest_framework_social_oauth2',
     'rest_framework',
+    'api_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
