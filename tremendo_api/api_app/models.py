@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
@@ -34,3 +35,13 @@ class Batch(models.Model):
 
     def __str__(self):
         return f"{self.total_classes}, {self.completed_classes}, {self.teacher}, {self.students}"
+
+class userProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    date_joined = models.DateTimeField(auto_now_add=True)
+    updated_on=models.DateTimeField(auto_now=True)
+    is_teacher = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+    
