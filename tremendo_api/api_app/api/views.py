@@ -1,14 +1,17 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
 
-from api_app.serializers import StudentSerializer, TeacherSerializer, BatchSerializer
-from api_app.models import Student, Teacher, Batch
+from api_app.serializers import StudentSerializer, TeacherSerializer, BatchSerializer, userProfileSerializer
+from api_app.models import Student, Teacher, Batch, userProfile
+from api_app.permission import IsOwnerProfileOrReadOnly
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+
+
 # Create your views here.
 
 class StudentList(APIView):
@@ -151,3 +154,17 @@ class BatchListView(ListAPIView):
     queryset = Batch.objects.all()
     serializer_class = BatchSerializer
     pagination_class = PageNumberPagination
+
+
+class UserProfileListCreateView(ListCreateAPIView):
+    queryset = userProfile.objects.all()
+    serializer_class = userProfileSerializer
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(user=user)
+
+class userProfileDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = userProfile.objects.all()
+    serializer_class = userProfileSerializer
+    permission_classes=[IsOwnerProfileOrReadOnly]
