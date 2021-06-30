@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'djoser',  # third party package for user registration and authentication endpoints 
     'social_django',
     'rest_framework_social_oauth2',
     'rest_framework',
