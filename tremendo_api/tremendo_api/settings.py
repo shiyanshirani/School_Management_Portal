@@ -31,7 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'djoser',  # third party package for user registration and authentication endpoints 
+    'rest_framework.authtoken',
+    'user_app',
+    'djoser',  #third party package for user registration and authentication endpoints 
     'social_django',
     'rest_framework_social_oauth2',
     'rest_framework',
@@ -137,10 +139,11 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAuthenticated',
         ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 1,
+    'PAGE_SIZE': 5,
 }
 
 # CACHE_SETTINGS
